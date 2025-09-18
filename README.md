@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Multi-Tenant SaaS Notes Application
+
+A secure, multi-tenant notes application built with Next.js, MongoDB, and Prisma.
+
+## Features
+
+- Multi-tenancy with data isolation
+- JWT-based authentication
+- Role-based access control (Admin/Member)
+- Subscription plans (Free/Pro) with feature gating
+- CRUD operations for notes
+- Responsive UI with Tailwind CSS
+
+## Multi-Tenancy Approach
+
+This application uses a **shared schema with tenant ID column** approach. All tenant-specific data includes a `tenantId` field that ensures data isolation. This approach was chosen because:
+
+1. It's cost-effective for MongoDB (single database)
+2. Simplifies database management and migrations
+3. Provides good performance with proper indexing
+4. Allows for easy scaling within MongoDB's limits
+
+All database queries include a `tenantId` filter to ensure strict data isolation between tenants.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js 18+
+- MongoDB database
+- Vercel account (for deployment)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Set up environment variables in `.env.local`:
+DATABASE_URL="mongodb+srv://01kingrajput01_db_user:hellohello@kanchimine10.camlpgo.mongodb.net/?retryWrites=true&w=majority&appName=KanchiMine10"
+JWT_SECRET="helloitsmeaashutoshsingh"
+4. Set up database: `npx prisma db push`
+5. Seed the database: `npm run seed`
+6. Run the development server: `npm run dev`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Test Accounts
 
-## Learn More
+The following test accounts are available (all with password: `password`):
 
-To learn more about Next.js, take a look at the following resources:
+- Admin: `admin@acme.test` (Acme Inc.)
+- User: `user@acme.test` (Acme Inc.)
+- Admin: `admin@globex.test` (Globex Corporation)
+- User: `user@globex.test` (Globex Corporation)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API Endpoints
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `GET /api/health` - Health check
+- `POST /api/auth/login` - User authentication
+- `GET /api/notes` - List all notes for current tenant
+- `POST /api/notes` - Create a new note
+- `GET /api/notes/:id` - Get a specific note
+- `PUT /api/notes/:id` - Update a note
+- `DELETE /api/notes/:id` - Delete a note
+- `POST /api/tenants/:slug/upgrade` - Upgrade tenant to Pro plan (Admin only)
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Push your code to a Git repository
+2. Connect your repository to Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The application will automatically build and deploy. Database migrations need to be run manually after deployment.
+
+## Security Features
+
+- JWT authentication with secure HTTP-only cookies
+- Role-based access control
+- Tenant data isolation at the application level
+- Input validation and error handling
+- CORS enabled for API endpoints
+
+## License
+
+MIT
