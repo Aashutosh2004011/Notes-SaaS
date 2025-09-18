@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -16,27 +16,23 @@ interface User {
   }
 }
 
+interface Note {
+  id: string
+  title: string
+  content: string
+  createdAt: string
+  author: {
+    email: string
+  }
+}
+
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null)
-  const [notes, setNotes] = useState<any[]>([])
+  const [notes, setNotes] = useState<Note[]>([])
   const [error, setError] = useState('')
   const router = useRouter()
 
-  useEffect(() => {
-    const token = localStorage.getItem('token')
-    const userData = localStorage.getItem('user')
-
-    if (!token || !userData) {
-      router.push('/auth/login')
-      return
-    }
-
-    const userObj = JSON.parse(userData)
-    setUser(userObj)
-    fetchNotes(token)
-  }, [router])
-
-const fetchNotes = async (token: string) => {
+  const fetchNotes = useCallback(async (token: string) => {
     try {
       console.log('🚀 Fetching notes with token:', token ? 'Present' : 'Missing')
       
@@ -68,11 +64,25 @@ const fetchNotes = async (token: string) => {
         
         setError(errorData.error || 'Failed to fetch notes')
       }
-    } catch (error) {
-      console.log('❌ Fetch error:', error)
+    } catch (fetchError) {
+      console.log('❌ Fetch error:', fetchError)
       setError('An error occurred while fetching notes')
     }
-  }
+  }, [router])
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    const userData = localStorage.getItem('user')
+
+    if (!token || !userData) {
+      router.push('/auth/login')
+      return
+    }
+
+    const userObj = JSON.parse(userData)
+    setUser(userObj)
+    fetchNotes(token)
+  }, [router, fetchNotes])
 
   const handleUpgrade = async () => {
     if (!user) return
@@ -99,7 +109,8 @@ const fetchNotes = async (token: string) => {
         const data = await response.json()
         setError(data.error || 'Upgrade failed')
       }
-    } catch (error) {
+    } catch (upgradeError) {
+      console.error('Upgrade error:', upgradeError)
       setError('An error occurred during upgrade')
     }
   }
@@ -165,7 +176,7 @@ const fetchNotes = async (token: string) => {
               <div className="ml-3">
                 <h3 className="text-sm font-medium text-yellow-800">Free plan limit reached</h3>
                 <div className="mt-2 text-sm text-yellow-700">
-                  <p>You've reached the maximum of 3 notes on the Free plan.</p>
+                  <p>You&apos;ve reached the maximum of 3 notes on the Free plan.</p>
                   {user.role === 'ADMIN' && (
                     <button
                       onClick={handleUpgrade}

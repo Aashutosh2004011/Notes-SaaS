@@ -68,7 +68,7 @@ export default function Home() {
                     <h3 className="ml-4 text-lg font-medium text-gray-900">Multi-Tenancy</h3>
                   </div>
                   <p className="mt-4 text-sm text-gray-500">
-                    Support for multiple tenants with strict data isolation. Each company's data is completely separated.
+                    Support for multiple tenants with strict data isolation. Each company&apos;s data is completely separated.
                   </p>
                 </div>
               </div>

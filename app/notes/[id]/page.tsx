@@ -34,6 +34,7 @@ export default function NoteForm() {
         setError('Failed to fetch note')
       }
     } catch (error) {
+      console.log("🚀 ~ fetchNote ~ error:", error)
       setError('An error occurred while fetching the note')
     }
   }
@@ -64,6 +65,7 @@ export default function NoteForm() {
         setError(data.error || 'Failed to save note')
       }
     } catch (error) {
+      console.log("🚀 ~ handleSubmit ~ error:", error)
       setError('An error occurred while saving the note')
     } finally {
       setIsLoading(false)

@@ -30,6 +30,7 @@ export default function Login() {
         setError(data.error || 'Login failed')
       }
     } catch (error) {
+      console.log("🚀 ~ handleSubmit ~ error:", error)
       setError('An error occurred during login')
     }
   }
